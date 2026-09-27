@@ -21,75 +21,84 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Roboto, sans-serif;
             overflow: hidden;
             position: relative;
         }
 
         /* 1. Сингулярна точка */
         .singularity {
-            width: 4px;
-            height: 4px;
+            width: 5px;
+            height: 5px;
             background-color: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 0 12px #ffffff;
+            box-shadow: 0 0 10px #ffffff;
             cursor: pointer;
-            animation: pulse 1.8s infinite ease-in-out;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             position: absolute;
             z-index: 10;
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.3; box-shadow: 0 0 4px #ffffff; }
-            50% { transform: scale(2.2); opacity: 1; box-shadow: 0 0 16px #ffffff; }
+        .singularity.pulse-active {
+            animation: organicPulse 2s infinite ease-in-out;
         }
 
-        /* Спалах */
-        .flash-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #ffffff;
+        @keyframes organicPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 6px rgba(255, 255, 255, 0.4); opacity: 0.4; }
+            50% { transform: scale(2.4); box-shadow: 0 0 18px rgba(255, 255, 255, 1); opacity: 1; }
+        }
+
+        /* М'яке свічення замість спалаху */
+        .soft-glow {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 120px 80px rgba(255, 255, 255, 0.9);
             opacity: 0;
             pointer-events: none;
-            z-index: 99;
-            transition: opacity 0.1s ease-out;
+            z-index: 9;
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* 2. Атом */
+        /* 2. Статичний Атом з орбітальним рухом электронів */
         .atom-container {
             position: absolute;
-            width: 140px;
-            height: 140px;
+            width: 160px;
+            height: 160px;
             display: flex;
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transform: scale(0.2);
-            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: scale(0.4);
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
             z-index: 5;
         }
 
         .atom-core {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             background: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 0 15px #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
         }
 
+        /* Орбіти НЕ крутяться */
         .orbit {
             position: absolute;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             border-radius: 50%;
-            animation: rotateOrbit linear infinite;
+            width: 150px;
+            height: 50px;
         }
 
-        .orbit:nth-child(1) { width: 130px; height: 45px; transform: rotate(0deg); animation-duration: 4s; }
-        .orbit:nth-child(2) { width: 130px; height: 45px; transform: rotate(60deg); animation-duration: 5s; }
-        .orbit:nth-child(3) { width: 130px; height: 45px; transform: rotate(120deg); animation-duration: 6s; }
+        .orbit:nth-child(1) { transform: rotate(0deg); }
+        .orbit:nth-child(2) { transform: rotate(60deg); }
+        .orbit:nth-child(3) { transform: rotate(120deg); }
 
+        /* Електрони ковзають по зафіксованих орбітах */
         .electron {
             position: absolute;
             width: 4px;
@@ -97,121 +106,153 @@
             background: #ffffff;
             border-radius: 50%;
             box-shadow: 0 0 8px #ffffff;
-            top: -2px;
-            left: 50%;
+            offset-path: ellipse(75px 25px at 50% 50%);
+            animation: orbitSlide 4s infinite linear;
         }
 
-        @keyframes rotateOrbit {
-            from { transform: rotate(var(--angle, 0deg)) rotateZ(0deg); }
-            to { transform: rotate(var(--angle, 0deg)) rotateZ(360deg); }
+        .orbit:nth-child(2) .electron { animation-delay: -1.3s; }
+        .orbit:nth-child(3) .electron { animation-delay: -2.6s; }
+
+        @keyframes orbitSlide {
+            0% { offset-distance: 0%; }
+            100% { offset-distance: 100%; }
         }
 
-        /* Текст та Поле вводу */
-        .ui-layer {
+        /* Контейнер для тексту та дати */
+        .stage-container {
             position: absolute;
-            bottom: 22%;
+            bottom: 25%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
-            opacity: 0;
-            transition: opacity 1s ease;
-            z-index: 4;
+            justify-content: center;
+            min-height: 50px;
+            z-index: 6;
         }
 
         .caption {
-            font-size: 13px;
-            letter-spacing: 2px;
+            font-size: 12px;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            opacity: 0.5;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+            color: rgba(255, 255, 255, 0.6);
             text-align: center;
+        }
+
+        /* Елегантне мінімалістичне поле дати */
+        .date-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 1s ease;
+            pointer-events: none;
+        }
+
+        .date-box.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
         }
 
         .date-input {
             background: transparent;
             border: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.25);
             color: #ffffff;
             font-size: 16px;
+            letter-spacing: 4px;
             text-align: center;
-            padding: 8px 12px;
-            letter-spacing: 3px;
             outline: none;
-            width: 180px;
+            padding: 6px 0;
             font-family: inherit;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.4s ease;
         }
 
         .date-input:focus {
-            border-color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.9);
         }
 
-        /* 3. Комета та Стрілка */
-        .comet {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #ffffff;
-            border-radius: 50%;
-            box-shadow: 0 0 20px 4px #ffffff, 0 -20px 15px rgba(255, 255, 255, 0.6);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 8;
+        .date-input::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 2px;
         }
 
-        .arrow-btn {
-            position: absolute;
-            bottom: 12%;
-            width: 44px;
-            height: 44px;
+        /* Стрілка «Вправо» */
+        .arrow-right {
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             border: 1px solid rgba(255, 255, 255, 0.3);
             display: flex;
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: scale(0.5);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
-            z-index: 10;
+            margin-left: 8px;
         }
 
-        .arrow-btn svg {
-            width: 18px;
-            height: 18px;
+        .arrow-right.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .arrow-right svg {
+            width: 16px;
+            height: 16px;
             fill: none;
             stroke: #ffffff;
-            stroke-width: 2;
+            stroke-width: 1.5;
             stroke-linecap: round;
             stroke-linejoin: round;
+        }
+
+        /* Комета */
+        .comet-particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px 3px #ffffff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 8;
+            transition: opacity 0.3s ease;
         }
     </style>
 </head>
 <body>
 
-    <div class="flash-overlay" id="flash"></div>
-    <div class="singularity" id="singularity"></div>
+    <div class="singularity pulse-active" id="singularity"></div>
+    <div class="soft-glow" id="softGlow"></div>
 
     <div class="atom-container" id="atom">
-        <div class="orbit" style="--angle: 0deg;"><div class="electron"></div></div>
-        <div class="orbit" style="--angle: 60deg;"><div class="electron"></div></div>
-        <div class="orbit" style="--angle: 120deg;"><div class="electron"></div></div>
+        <div class="orbit"><div class="electron"></div></div>
+        <div class="orbit"><div class="electron"></div></div>
+        <div class="orbit"><div class="electron"></div></div>
         <div class="atom-core"></div>
     </div>
 
-    <div class="ui-layer" id="uiLayer">
+    <div class="stage-container">
         <div class="caption" id="captionText">The birth of your digital origin</div>
-        <input type="text" class="date-input" id="dateInput" placeholder="РРРР / ММ / ДД" style="display: none;" maxlength="10">
+        
+        <div class="date-box" id="dateBox">
+            <input type="text" class="date-input" id="dateInput" placeholder="РРРР / ММ / ДД" maxlength="10" autocomplete="off">
+            <div class="arrow-right" id="arrowBtn">
+                <svg viewBox="0 0 24 24">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </div>
+        </div>
     </div>
 
-    <div class="comet" id="comet"></div>
-
-    <div class="arrow-btn" id="arrowBtn">
-        <svg viewBox="0 0 24 24">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <polyline points="19 12 12 19 5 12"></polyline>
-        </svg>
-    </div>
+    <div class="comet-particle" id="comet"></div>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -219,10 +260,10 @@
         tg.expand();
 
         const singularity = document.getElementById('singularity');
-        const flash = document.getElementById('flash');
+        const softGlow = document.getElementById('softGlow');
         const atom = document.getElementById('atom');
-        const uiLayer = document.getElementById('uiLayer');
         const captionText = document.getElementById('captionText');
+        const dateBox = document.getElementById('dateBox');
         const dateInput = document.getElementById('dateInput');
         const comet = document.getElementById('comet');
         const arrowBtn = document.getElementById('arrowBtn');
@@ -238,82 +279,94 @@
             }
         }
 
-        // Етап 1 -> Етап 2: Спалах та Атом
-        function evolve() {
+        // Вібрація на кожен пік пульсації (кожні 2 сек)
+        const pulseInterval = setInterval(() => {
+            if (!isEvolved) {
+                haptic('light');
+            } else {
+                clearInterval(pulseInterval);
+            }
+        }, 2000);
+
+        // Потап на точку -> м'який розквіт Атома
+        singularity.addEventListener('click', () => {
             if (isEvolved) return;
             isEvolved = true;
-
-            haptic('heavy');
-
-            // Спалах
-            flash.style.opacity = '1';
-            setTimeout(() => flash.style.opacity = '0', 120);
-
-            // Сховуємо точку, виводимо Атом
-            singularity.style.display = 'none';
-            atom.style.opacity = '1';
-            atom.style.transform = 'scale(1)';
-
-            // Показуємо напис
-            setTimeout(() => {
-                uiLayer.style.opacity = '1';
-            }, 400);
-        }
-
-        singularity.addEventListener('click', evolve);
-        setTimeout(evolve, 5000);
-
-        // Натискання на Атом -> поява поля вводу
-        atom.addEventListener('click', () => {
-            if (!isEvolved) return;
+            clearInterval(pulseInterval);
             haptic('medium');
 
-            captionText.style.opacity = '0';
+            // Згасання точки + м'яке сяйво
+            singularity.classList.remove('pulse-active');
+            singularity.style.opacity = '0';
+            
+            softGlow.style.opacity = '1';
+            softGlow.style.transform = 'scale(150)';
+
             setTimeout(() => {
-                captionText.style.display = 'none';
-                dateInput.style.display = 'block';
-                dateInput.focus();
-            }, 300);
+                softGlow.style.opacity = '0';
+                singularity.style.display = 'none';
+
+                // Поява статичного Атома
+                atom.style.opacity = '1';
+                atom.style.transform = 'scale(1)';
+
+                // Текст плавно проростає ТІЛЬКИ через 4 секунди
+                setTimeout(() => {
+                    captionText.style.opacity = '1';
+                }, 4000);
+
+            }, 500);
         });
 
-        // Ввід / Фокус дати -> політ Комети вниз і перетворення на Стрілку
-        dateInput.addEventListener('focus', launchComet);
+        // Натискання на Атом -> плавність розчинення тексту й поява дати
+        atom.addEventListener('click', () => {
+            if (!isEvolved || dateBox.classList.contains('active')) return;
+            haptic('light');
 
-        function launchComet() {
+            captionText.style.opacity = '0';
+            
+            setTimeout(() => {
+                captionText.style.display = 'none';
+                dateBox.classList.add('active');
+            }, 1000);
+        });
+
+        // Ввід / фокус дати -> Атом розгортається в комету і плавно обгинає дату
+        dateInput.addEventListener('focus', () => {
             if (isCometLaunched) return;
             isCometLaunched = true;
             haptic('medium');
 
-            // Згортаємо Атом у комету
-            atom.style.transition = 'all 0.4s ease-in';
-            atom.style.transform = 'scale(0)';
+            // Атом м'яко стискається
             atom.style.opacity = '0';
+            atom.style.transform = 'scale(0.1)';
 
             setTimeout(() => {
-                const atomRect = atom.getBoundingClientRect();
-                comet.style.left = (atomRect.left + atomRect.width / 2 - 3) + 'px';
-                comet.style.top = (atomRect.top + atomRect.height / 2 - 3) + 'px';
+                const rect = dateBox.getBoundingClientRect();
+                
+                // Старт комети згори дати
+                comet.style.left = (rect.left - 10) + 'px';
+                comet.style.top = (rect.top - 15) + 'px';
                 comet.style.opacity = '1';
 
-                // Анімація польоту комети вниз
+                // Плавне обгинання дати за дугою (підкреслення)
                 setTimeout(() => {
-                    haptic('heavy');
-                    comet.style.transition = 'top 0.6s cubic-bezier(0.5, 0, 0.75, 0)';
-                    comet.style.top = (window.innerHeight * 0.88) + 'px';
+                    comet.style.transition = 'all 0.9s cubic-bezier(0.4, 0, 0.2, 1)';
+                    comet.style.left = (rect.right + 5) + 'px';
+                    comet.style.top = (rect.bottom - 10) + 'px';
 
-                    // Перетворення комети на стрілку
                     setTimeout(() => {
                         comet.style.opacity = '0';
-                        arrowBtn.style.opacity = '1';
-                        arrowBtn.style.transform = 'translateY(0)';
-                    }, 550);
+                        arrowBtn.classList.add('visible');
+                        haptic('heavy');
+                    }, 850);
                 }, 100);
-            }, 300);
-        }
+            }, 400);
+        });
 
         arrowBtn.addEventListener('click', () => {
             haptic('heavy');
-            // Перехід на наступний модуль
+            // Наступний крок
         });
     </script>
 </body>
