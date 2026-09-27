@@ -6,11 +6,16 @@
     <title>Digital Twin</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
         body {
             background-color: #000000;
             color: #ffffff;
-            margin: 0;
-            padding: 0;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -18,46 +23,297 @@
             align-items: center;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             overflow: hidden;
+            position: relative;
         }
 
-        .dot {
-            width: 8px;
-            height: 8px;
+        /* 1. Сингулярна точка */
+        .singularity {
+            width: 4px;
+            height: 4px;
             background-color: #ffffff;
             border-radius: 50%;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 12px #ffffff;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            animation: pulse 1.8s infinite ease-in-out;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            z-index: 10;
         }
 
-        .dot:active {
-            transform: scale(1.5);
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; box-shadow: 0 0 4px #ffffff; }
+            50% { transform: scale(2.2); opacity: 1; box-shadow: 0 0 16px #ffffff; }
         }
 
-        .text {
-            margin-top: 20px;
-            font-size: 14px;
-            letter-spacing: 1px;
-            opacity: 0.6;
+        /* Спалах */
+        .flash-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #ffffff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 99;
+            transition: opacity 0.1s ease-out;
+        }
+
+        /* 2. Атом */
+        .atom-container {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: scale(0.2);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .atom-core {
+            width: 12px;
+            height: 12px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #ffffff;
+        }
+
+        .orbit {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: rotateOrbit linear infinite;
+        }
+
+        .orbit:nth-child(1) { width: 130px; height: 45px; transform: rotate(0deg); animation-duration: 4s; }
+        .orbit:nth-child(2) { width: 130px; height: 45px; transform: rotate(60deg); animation-duration: 5s; }
+        .orbit:nth-child(3) { width: 130px; height: 45px; transform: rotate(120deg); animation-duration: 6s; }
+
+        .electron {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #ffffff;
+            top: -2px;
+            left: 50%;
+        }
+
+        @keyframes rotateOrbit {
+            from { transform: rotate(var(--angle, 0deg)) rotateZ(0deg); }
+            to { transform: rotate(var(--angle, 0deg)) rotateZ(360deg); }
+        }
+
+        /* Текст та Поле вводу */
+        .ui-layer {
+            position: absolute;
+            bottom: 22%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 1s ease;
+            z-index: 4;
+        }
+
+        .caption {
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.5;
+            text-align: center;
+        }
+
+        .date-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 16px;
+            text-align: center;
+            padding: 8px 12px;
+            letter-spacing: 3px;
+            outline: none;
+            width: 180px;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        .date-input:focus {
+            border-color: #ffffff;
+        }
+
+        /* 3. Комета та Стрілка */
+        .comet {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 20px 4px #ffffff, 0 -20px 15px rgba(255, 255, 255, 0.6);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 8;
+        }
+
+        .arrow-btn {
+            position: absolute;
+            bottom: 12%;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .arrow-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: #ffffff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
     </style>
 </head>
 <body>
 
-    <div class="dot" id="coreDot"></div>
-    <div class="text">The birth of your digital origin</div>
+    <div class="flash-overlay" id="flash"></div>
+    <div class="singularity" id="singularity"></div>
+
+    <div class="atom-container" id="atom">
+        <div class="orbit" style="--angle: 0deg;"><div class="electron"></div></div>
+        <div class="orbit" style="--angle: 60deg;"><div class="electron"></div></div>
+        <div class="orbit" style="--angle: 120deg;"><div class="electron"></div></div>
+        <div class="atom-core"></div>
+    </div>
+
+    <div class="ui-layer" id="uiLayer">
+        <div class="caption" id="captionText">The birth of your digital origin</div>
+        <input type="text" class="date-input" id="dateInput" placeholder="РРРР / ММ / ДД" style="display: none;" maxlength="10">
+    </div>
+
+    <div class="comet" id="comet"></div>
+
+    <div class="arrow-btn" id="arrowBtn">
+        <svg viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <polyline points="19 12 12 19 5 12"></polyline>
+        </svg>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
-        const dot = document.getElementById('coreDot');
-        
-        dot.addEventListener('click', () => {
+        const singularity = document.getElementById('singularity');
+        const flash = document.getElementById('flash');
+        const atom = document.getElementById('atom');
+        const uiLayer = document.getElementById('uiLayer');
+        const captionText = document.getElementById('captionText');
+        const dateInput = document.getElementById('dateInput');
+        const comet = document.getElementById('comet');
+        const arrowBtn = document.getElementById('arrowBtn');
+
+        let isEvolved = false;
+        let isCometLaunched = false;
+
+        function haptic(type = 'light') {
             if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('medium');
+                if (type === 'heavy') tg.HapticFeedback.impactOccurred('heavy');
+                else if (type === 'medium') tg.HapticFeedback.impactOccurred('medium');
+                else tg.HapticFeedback.impactOccurred('light');
             }
+        }
+
+        // Етап 1 -> Етап 2: Спалах та Атом
+        function evolve() {
+            if (isEvolved) return;
+            isEvolved = true;
+
+            haptic('heavy');
+
+            // Спалах
+            flash.style.opacity = '1';
+            setTimeout(() => flash.style.opacity = '0', 120);
+
+            // Сховуємо точку, виводимо Атом
+            singularity.style.display = 'none';
+            atom.style.opacity = '1';
+            atom.style.transform = 'scale(1)';
+
+            // Показуємо напис
+            setTimeout(() => {
+                uiLayer.style.opacity = '1';
+            }, 400);
+        }
+
+        singularity.addEventListener('click', evolve);
+        setTimeout(evolve, 5000);
+
+        // Натискання на Атом -> поява поля вводу
+        atom.addEventListener('click', () => {
+            if (!isEvolved) return;
+            haptic('medium');
+
+            captionText.style.opacity = '0';
+            setTimeout(() => {
+                captionText.style.display = 'none';
+                dateInput.style.display = 'block';
+                dateInput.focus();
+            }, 300);
+        });
+
+        // Ввід / Фокус дати -> політ Комети вниз і перетворення на Стрілку
+        dateInput.addEventListener('focus', launchComet);
+
+        function launchComet() {
+            if (isCometLaunched) return;
+            isCometLaunched = true;
+            haptic('medium');
+
+            // Згортаємо Атом у комету
+            atom.style.transition = 'all 0.4s ease-in';
+            atom.style.transform = 'scale(0)';
+            atom.style.opacity = '0';
+
+            setTimeout(() => {
+                const atomRect = atom.getBoundingClientRect();
+                comet.style.left = (atomRect.left + atomRect.width / 2 - 3) + 'px';
+                comet.style.top = (atomRect.top + atomRect.height / 2 - 3) + 'px';
+                comet.style.opacity = '1';
+
+                // Анімація польоту комети вниз
+                setTimeout(() => {
+                    haptic('heavy');
+                    comet.style.transition = 'top 0.6s cubic-bezier(0.5, 0, 0.75, 0)';
+                    comet.style.top = (window.innerHeight * 0.88) + 'px';
+
+                    // Перетворення комети на стрілку
+                    setTimeout(() => {
+                        comet.style.opacity = '0';
+                        arrowBtn.style.opacity = '1';
+                        arrowBtn.style.transform = 'translateY(0)';
+                    }, 550);
+                }, 100);
+            }, 300);
+        }
+
+        arrowBtn.addEventListener('click', () => {
+            haptic('heavy');
+            // Перехід на наступний модуль
         });
     </script>
 </body>
