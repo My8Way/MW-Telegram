@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -15,7 +15,7 @@
 
         body {
             background-color: #000000;
-            color: #ffffff;
+            color: #FFFDF0;
             height: 100vh;
             display: flex;
             flex-direction: column;
@@ -30,9 +30,9 @@
         .singularity {
             width: 5px;
             height: 5px;
-            background-color: #ffffff;
+            background-color: #FFFDF0;
             border-radius: 50%;
-            box-shadow: 0 0 10px #ffffff;
+            box-shadow: 0 0 10px #FFFDF0;
             cursor: pointer;
             position: absolute;
             z-index: 10;
@@ -43,23 +43,23 @@
         }
 
         @keyframes organicPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 6px rgba(255, 255, 255, 0.3); opacity: 0.3; }
-            50% { transform: scale(2.5); box-shadow: 0 0 20px rgba(255, 255, 255, 1); opacity: 1; }
+            0%, 100% { transform: scale(1); box-shadow: 0 0 6px rgba(255, 253, 240, 0.3); opacity: 0.3; }
+            50% { transform: scale(2.5); box-shadow: 0 0 20px rgba(255, 253, 240, 1); opacity: 1; }
         }
 
-        /* Зоряний пил (замість спалаху) */
-        .stardust {
+        /* Частинки вибуху наднової */
+        .supernova-spark {
             position: absolute;
-            width: 3px;
-            height: 3px;
-            background: #ffffff;
+            width: 2px;
+            height: 2px;
+            background: #FFFDF0;
             border-radius: 50%;
             pointer-events: none;
-            opacity: 0;
             z-index: 9;
+            box-shadow: 0 0 6px #FFFDF0;
         }
 
-        /* 2. Живий Атом з диханням та зафіксованими орбітами */
+        /* 2. Атом з живим пульсуючим ядром */
         .atom-container {
             position: absolute;
             width: 160px;
@@ -68,10 +68,10 @@
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transform: scale(0.4);
+            transform: scale(0.1);
             transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 5;
-            pointer-events: none; /* Блоковано до появи тексту */
+            pointer-events: none;
         }
 
         .atom-container.breath {
@@ -86,14 +86,20 @@
         .atom-core {
             width: 10px;
             height: 10px;
-            background: #ffffff;
+            background: #FFFDF0;
             border-radius: 50%;
-            box-shadow: 0 0 18px rgba(255, 255, 255, 1);
+            box-shadow: 0 0 18px rgba(255, 253, 240, 1);
+            animation: corePulse 4s infinite ease-in-out;
+        }
+
+        @keyframes corePulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 12px rgba(255, 253, 240, 0.6); }
+            50% { transform: scale(1.35); box-shadow: 0 0 22px rgba(255, 253, 240, 1); }
         }
 
         .orbit {
             position: absolute;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 253, 240, 0.2);
             border-radius: 50%;
             width: 150px;
             height: 50px;
@@ -103,14 +109,13 @@
         .orbit:nth-child(2) { transform: rotate(60deg); }
         .orbit:nth-child(3) { transform: rotate(120deg); }
 
-        /* Електрони рухаються повільніше (6s) */
         .electron {
             position: absolute;
             width: 4px;
             height: 4px;
-            background: #ffffff;
+            background: #FFFDF0;
             border-radius: 50%;
-            box-shadow: 0 0 8px #ffffff;
+            box-shadow: 0 0 8px #FFFDF0;
             offset-path: ellipse(75px 25px at 50% 50%);
             animation: orbitSlide 6s infinite linear;
         }
@@ -131,6 +136,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            width: 100%;
             z-index: 6;
         }
 
@@ -140,19 +146,21 @@
             text-transform: uppercase;
             opacity: 0;
             transition: opacity 1.2s ease;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 253, 240, 0.6);
             text-align: center;
         }
 
-        /* Преміальне сегментоване поле дати */
+        /* Поле дати */
         .date-box {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 6px;
             opacity: 0;
             transform: translateY(12px);
             transition: all 1s ease;
             pointer-events: none;
+            margin: 0 auto;
         }
 
         .date-box.active {
@@ -164,8 +172,8 @@
         .date-segment {
             background: transparent;
             border: none;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            color: #ffffff;
+            border-bottom: 1px solid rgba(255, 253, 240, 0.3);
+            color: #FFFDF0;
             font-size: 15px;
             letter-spacing: 2px;
             text-align: center;
@@ -176,31 +184,31 @@
         }
 
         .date-segment:focus {
-            border-color: #ffffff;
+            border-color: #FFFDF0;
         }
 
-        .date-segment.year { width: 55px; }
-        .date-segment.unit { width: 35px; }
+        .date-segment.unit { width: 38px; }
+        .date-segment.year { width: 58px; }
 
         .date-divider {
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(255, 253, 240, 0.3);
             font-size: 14px;
         }
 
-        /* Стрілка «Вправо» з пульсацією */
+        /* Стрілка */
         .arrow-right {
             width: 38px;
             height: 38px;
             border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 253, 240, 0.4);
             display: flex;
             justify-content: center;
             align-items: center;
             opacity: 0;
             transform: scale(0.5);
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             cursor: pointer;
-            margin-left: 10px;
+            margin-left: 8px;
         }
 
         .arrow-right.visible {
@@ -210,15 +218,15 @@
         }
 
         @keyframes arrowPulse {
-            0%, 100% { box-shadow: 0 0 4px rgba(255, 255, 255, 0.2); transform: scale(1); }
-            50% { box-shadow: 0 0 12px rgba(255, 255, 255, 0.8); transform: scale(1.08); }
+            0%, 100% { box-shadow: 0 0 4px rgba(255, 253, 240, 0.2); transform: scale(1); }
+            50% { box-shadow: 0 0 12px rgba(255, 253, 240, 0.8); transform: scale(1.08); }
         }
 
         .arrow-right svg {
             width: 16px;
             height: 16px;
             fill: none;
-            stroke: #ffffff;
+            stroke: #FFFDF0;
             stroke-width: 1.5;
             stroke-linecap: round;
             stroke-linejoin: round;
@@ -229,9 +237,9 @@
             position: absolute;
             width: 6px;
             height: 6px;
-            background: #ffffff;
+            background: #FFFDF0;
             border-radius: 50%;
-            box-shadow: 0 0 16px 3px #ffffff;
+            box-shadow: 0 0 16px 3px #FFFDF0;
             opacity: 0;
             pointer-events: none;
             z-index: 8;
@@ -253,11 +261,11 @@
         <div class="caption" id="captionText">The birth of your digital origin</div>
         
         <div class="date-box" id="dateBox">
-            <input type="text" class="date-segment year" id="yearInput" placeholder="РРРР" maxlength="4" autocomplete="off">
+            <input type="text" class="date-segment unit" id="dayInput" placeholder="DD" maxlength="2" inputmode="numeric" autocomplete="off">
             <span class="date-divider">/</span>
-            <input type="text" class="date-segment unit" id="monthInput" placeholder="ММ" maxlength="2" autocomplete="off">
+            <input type="text" class="date-segment unit" id="monthInput" placeholder="MM" maxlength="2" inputmode="numeric" autocomplete="off">
             <span class="date-divider">/</span>
-            <input type="text" class="date-segment unit" id="dayInput" placeholder="ДД" maxlength="2" autocomplete="off">
+            <input type="text" class="date-segment year" id="yearInput" placeholder="YYYY" maxlength="4" inputmode="numeric" autocomplete="off">
             
             <div class="arrow-right" id="arrowBtn">
                 <svg viewBox="0 0 24 24">
@@ -279,9 +287,9 @@
         const atom = document.getElementById('atom');
         const captionText = document.getElementById('captionText');
         const dateBox = document.getElementById('dateBox');
-        const yearInput = document.getElementById('yearInput');
-        const monthInput = document.getElementById('monthInput');
         const dayInput = document.getElementById('dayInput');
+        const monthInput = document.getElementById('monthInput');
+        const yearInput = document.getElementById('yearInput');
         const comet = document.getElementById('comet');
         const arrowBtn = document.getElementById('arrowBtn');
 
@@ -296,7 +304,6 @@
             }
         }
 
-        // Точний такт вібрації під час пікового розширення (кожні 2 сек на 1000ms)
         const pulseInterval = setInterval(() => {
             if (!isEvolved) {
                 setTimeout(() => haptic('light'), 1000);
@@ -305,61 +312,59 @@
             }
         }, 2000);
 
-        // Потап на точку -> Спалах зоряного пилу + Поява Атома
         singularity.addEventListener('click', () => {
             if (isEvolved) return;
             isEvolved = true;
             clearInterval(pulseInterval);
             haptic('medium');
 
-            // Ефект Зоряного пилу
-            createStardust();
+            explodeSupernova();
 
             singularity.style.opacity = '0';
-            setTimeout(() => singularity.style.display = 'none', 400);
+            setTimeout(() => singularity.style.display = 'none', 300);
 
-            // Поява Атома
             setTimeout(() => {
                 atom.style.opacity = '1';
                 atom.style.transform = 'scale(1)';
                 atom.classList.add('breath');
 
-                // Текст плавно проростає ЧЕРЕЗ 4 СЕКУНДИ
                 setTimeout(() => {
                     captionText.style.opacity = '1';
-                    atom.style.pointerEvents = 'all'; // Клікабельний тільки тепер!
+                    atom.style.pointerEvents = 'all';
                     atom.style.cursor = 'pointer';
                 }, 4000);
 
             }, 300);
         });
 
-        function createStardust() {
-            for (let i = 0; i < 12; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'stardust';
-                document.body.appendChild(particle);
+        function explodeSupernova() {
+            const count = 45;
+            for (let i = 0; i < count; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'supernova-spark';
+                document.body.appendChild(spark);
 
-                const angle = (i / 12) * Math.PI * 2;
-                const dist = 40 + Math.random() * 30;
-                const x = Math.cos(angle) * dist;
-                const y = Math.sin(angle) * dist;
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 80;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance;
+                const size = 1.5 + Math.random() * 2.5;
 
-                particle.style.left = '50%';
-                particle.style.top = '50%';
-                particle.style.opacity = '1';
+                spark.style.width = size + 'px';
+                spark.style.height = size + 'px';
+                spark.style.left = '50%';
+                spark.style.top = '50%';
 
-                particle.animate([
+                spark.animate([
                     { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
                     { transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(0)`, opacity: 0 }
                 ], {
-                    duration: 800,
-                    easing: 'cubic-bezier(0.16, 1, 0.3, 1)'
-                }).onfinish = () => particle.remove();
+                    duration: 700 + Math.random() * 400,
+                    easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+                }).onfinish = () => spark.remove();
             }
         }
 
-        // Натискання на Атом -> зникає текст, з'являються коми дати
         atom.addEventListener('click', () => {
             if (!isEvolved) return;
             haptic('light');
@@ -369,22 +374,43 @@
             setTimeout(() => {
                 captionText.style.display = 'none';
                 dateBox.classList.add('active');
-                yearInput.focus();
+                dayInput.focus();
             }, 800);
         });
 
-        // Авто-перехід між полями дати
-        yearInput.addEventListener('input', () => {
-            if (yearInput.value.length === 4) monthInput.focus();
-            triggerComet();
-        });
-        monthInput.addEventListener('input', () => {
-            if (monthInput.value.length === 2) dayInput.focus();
+        // Валідація DD / MM / YYYY
+        function sanitizeInput(input, maxVal) {
+            input.value = input.value.replace(/\D/g, '');
+            if (maxVal && parseInt(input.value) > maxVal) {
+                input.value = maxVal.toString();
+            }
+        }
+
+        dayInput.addEventListener('input', () => {
+            sanitizeInput(dayInput, 31);
+            if (dayInput.value.length === 2) monthInput.focus();
+            checkAndLaunchComet();
         });
 
-        // Політ комети навколо дати та перетворення на Стрілку
-        function triggerComet() {
+        monthInput.addEventListener('input', () => {
+            sanitizeInput(monthInput, 12);
+            if (monthInput.value.length === 2) yearInput.focus();
+            checkAndLaunchComet();
+        });
+
+        yearInput.addEventListener('input', () => {
+            sanitizeInput(yearInput, 2026);
+            checkAndLaunchComet();
+        });
+
+        function checkAndLaunchComet() {
             if (isCometLaunched) return;
+            if (dayInput.value.length > 0 || monthInput.value.length > 0 || yearInput.value.length > 0) {
+                triggerComet();
+            }
+        }
+
+        function triggerComet() {
             isCometLaunched = true;
             haptic('medium');
 
@@ -396,27 +422,25 @@
                 const rect = dateBox.getBoundingClientRect();
                 
                 comet.style.left = (rect.left - 15) + 'px';
-                comet.style.top = (rect.top - 10) + 'px';
+                comet.style.top = (rect.top - 5) + 'px';
                 comet.style.opacity = '1';
 
-                // Дуга-підкреслення навколо дати
                 setTimeout(() => {
-                    comet.style.transition = 'all 0.9s cubic-bezier(0.16, 1, 0.3, 1)';
-                    comet.style.left = (rect.right + 12) + 'px';
+                    comet.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+                    comet.style.left = (rect.right + 8) + 'px';
                     comet.style.top = (rect.top + 5) + 'px';
 
                     setTimeout(() => {
                         comet.style.opacity = '0';
                         arrowBtn.classList.add('visible');
                         haptic('heavy');
-                    }, 850);
+                    }, 750);
                 }, 100);
             }, 300);
         }
 
         arrowBtn.addEventListener('click', () => {
             haptic('heavy');
-            // Модуль 2
         });
     </script>
 </body>
